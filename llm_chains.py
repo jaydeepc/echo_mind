@@ -6,14 +6,18 @@ from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import PromptTemplate
 from langchain.llms import CTransformers
 from langchain.vectorstores import Chroma
+from langchain_community.llms import Ollama
 import chromadb
-import yaml
+from langchain.callbacks.manager import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+
 
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
 def create_llm(model_path = config["model_path"]["large"], model_type = config["model_type"], model_config = config["model_config"]):
-    llm = CTransformers(model=model_path, model_type=model_type, config=model_config)
+    # llm = CTransformers(model=model_path, model_type=model_type, config=model_config)
+    llm = Ollama(model="llama2:70b", callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]))    
     return llm
 
 def create_embeddings(embeddings_path = config["embeddings_path"]):
